@@ -36,6 +36,7 @@ export interface ModalData {
   fee: string;
   tip: string;
   image: string;
+  city?: string;
 }
 
 export interface PlannerForm {

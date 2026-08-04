@@ -120,18 +120,30 @@ export default function TripSummary({
   const [showShareModal, setShowShareModal] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [shareNote, setShareNote] = useState('Check out our Royal Rajasthan caravan itinerary!');
+  const [domainType, setDomainType] = useState<'com' | 'live' | 'custom'>('com');
+  const [customComDomain, setCustomComDomain] = useState('royalrajasthan.com');
 
-  // Unique Share URL generation
+  // Unique Share URL generation supporting .com domain options
   const shareUrl = useMemo(() => {
-    if (typeof window === 'undefined') return '';
-    const origin = window.location.origin;
-    const pathname = window.location.pathname;
+    let domainPrefix = 'https://royalrajasthan.com';
+
+    if (domainType === 'live' && typeof window !== 'undefined') {
+      domainPrefix = window.location.origin;
+    } else if (domainType === 'custom') {
+      let cleaned = customComDomain.trim().replace(/^https?:\/\//, '');
+      if (!cleaned) cleaned = 'royalrajasthan.com';
+      if (!cleaned.toLowerCase().endsWith('.com') && !cleaned.includes('.')) {
+        cleaned += '.com';
+      }
+      domainPrefix = `https://${cleaned}`;
+    }
+
     const params = new URLSearchParams();
     params.set('route', destinations.join(','));
     params.set('mode', transportMode);
     params.set('page', 'planner');
-    return `${origin}${pathname}?${params.toString()}`;
-  }, [destinations, transportMode]);
+    return `${domainPrefix}/planner?${params.toString()}`;
+  }, [destinations, transportMode, domainType, customComDomain]);
 
   const copyShareUrl = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -581,6 +593,66 @@ export default function TripSummary({
                 <div className="text-sm font-extrabold text-white tracking-tight">
                   {destinations.join(' ➔ ')}
                 </div>
+              </div>
+
+              {/* Domain Format Chooser (.com vs Live Origin vs Custom .com) */}
+              <div className="space-y-1.5 bg-indigo-50/70 border border-indigo-200/80 p-3 rounded-xl">
+                <label className="text-xs font-bold text-indigo-950 uppercase tracking-wider block flex items-center justify-between">
+                  <span>🌐 Choose Share URL Domain Format:</span>
+                  <span className="text-[10px] text-indigo-700 font-mono font-bold bg-indigo-100 px-2 py-0.5 rounded-full">
+                    .COM Enabled
+                  </span>
+                </label>
+                <div className="grid grid-cols-3 gap-1.5 text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setDomainType('com')}
+                    className={`py-1.5 px-2 rounded-lg border transition text-center cursor-pointer ${
+                      domainType === 'com'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                        : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300'
+                    }`}
+                  >
+                    royalrajasthan.com
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setDomainType('live')}
+                    className={`py-1.5 px-2 rounded-lg border transition text-center cursor-pointer ${
+                      domainType === 'live'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                        : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300'
+                    }`}
+                  >
+                    Current App URL
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setDomainType('custom')}
+                    className={`py-1.5 px-2 rounded-lg border transition text-center cursor-pointer ${
+                      domainType === 'custom'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                        : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300'
+                    }`}
+                  >
+                    Custom .com
+                  </button>
+                </div>
+
+                {domainType === 'custom' && (
+                  <div className="pt-1.5 flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-indigo-900 shrink-0">https://</span>
+                    <input
+                      type="text"
+                      value={customComDomain}
+                      onChange={(e) => setCustomComDomain(e.target.value)}
+                      placeholder="mytrip.com"
+                      className="w-full px-2.5 py-1.5 bg-white border border-indigo-300 rounded-lg text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Unique URL Link Input Box */}

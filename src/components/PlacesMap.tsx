@@ -34,10 +34,12 @@ import {
   RefreshCw,
   Sliders,
   Download,
-  Share2
+  Share2,
+  Utensils
 } from 'lucide-react';
 import { WishlistItem } from '../types';
 import { toggleWishlistItem, isWishlisted } from '../utils/wishlist';
+import { getCityCulinaryHighlights } from '../data';
 
 export interface PlaceLocation {
   id: string;
@@ -892,6 +894,36 @@ export default function PlacesMap({
                   {activePlace.proTip}
                 </p>
               </div>
+
+              {/* Culinary Highlights in City */}
+              {(() => {
+                const culinary = getCityCulinaryHighlights(activePlace.city);
+                return (
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50/70 border border-amber-200/90 p-3 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between border-b border-amber-200/60 pb-1.5">
+                      <span className="text-[10px] font-extrabold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <Utensils className="w-3.5 h-3.5 text-amber-600" /> Must-Try Dishes in {activePlace.city}
+                      </span>
+                      <span className="text-[9px] bg-amber-200/80 text-amber-950 font-mono font-bold px-1.5 py-0.5 rounded">
+                        Foodie Tips
+                      </span>
+                    </div>
+                    <div className="space-y-1.5 text-[11px]">
+                      {culinary.dishes.slice(0, 3).map((d) => (
+                        <div key={d.id} className="bg-white/90 p-2 rounded-lg border border-amber-200/60 flex items-center justify-between gap-2 shadow-2xs">
+                          <div className="truncate flex-1">
+                            <span className="font-bold text-slate-800 block truncate">{d.name}</span>
+                            <span className="text-[10px] text-slate-500 block truncate">Must try at: {d.famousAt}</span>
+                          </div>
+                          <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 shrink-0">
+                            {d.type}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Actions */}
               <div className="pt-2 flex flex-wrap items-center gap-2">

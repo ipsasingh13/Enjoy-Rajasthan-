@@ -721,3 +721,5 @@ export const rajasthanHotelsData = [
   }
 ];
 
+export * from './data/culinaryData';
+

@@ -1,10 +1,31 @@
 @import "tailwindcss";
 
+:root {
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --border-main: #e2e8f0;
+  color-scheme: light;
+}
+
+html.dark {
+  --bg-app: #0f172a;
+  --bg-card: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-main: #334155;
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #root {
@@ -13,10 +34,87 @@ body {
   flex-direction: column;
 }
 
+/* Global Dark Mode Overrides for Readability */
+html.dark body {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html.dark header {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark header .text-black,
+html.dark header .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+html.dark header nav button {
+  color: #94a3b8;
+}
+
+html.dark header nav button:hover {
+  color: #ffffff;
+}
+
+html.dark footer {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark footer span.text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+/* Card and Container styling in Dark mode */
+html.dark .bg-white {
+  background-color: #1e293b !important;
+  color: #f8fafc;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #0f172a !important;
+  color: #f8fafc;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #1e293b !important;
+  color: #f8fafc;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .border-slate-200,
+html.dark .border-slate-100 {
+  border-color: #334155 !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f8fafc; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+html.dark ::-webkit-scrollbar-track { background: #0f172a; }
+html.dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
 .sitar-string {
   transition: transform 0.1s ease-out, background-color 0.1s;
@@ -25,3 +123,4 @@ body {
   transform: scaleY(1.05);
   background-color: #e0e7ff;
 }
+

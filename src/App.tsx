@@ -13,7 +13,7 @@ import PostcardComponent from './components/PostcardComponent';
 import Toast from './components/Toast';
 
 import WeatherComponent from './components/WeatherComponent';
-import { attractionDetailsInfo } from './data';
+import { attractionDetailsInfo, detectCityFromAttraction } from './data';
 import { Language, ModalData, Page, ToastMessage } from './types';
 
 export default function App() {
@@ -22,7 +22,30 @@ export default function App() {
     const saved = localStorage.getItem('rajasthan_lang');
     return (saved as Language) || 'en';
   });
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('rajasthan_theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('rajasthan_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      addToast(next === 'dark' ? '🌙 Switched to Dark Theme' : '☀️ Switched to Light Theme');
+      return next;
+    });
+  };
   
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -85,7 +108,7 @@ export default function App() {
     addToast("Successfully authenticated Maharaja Guest Profile!");
   };
 
-  const openAttractionDetail = (name: string, categoryName: string) => {
+  const openAttractionDetail = (name: string, categoryName: string, city?: string) => {
     const searchKey = name.trim();
     const defaultDetails = {
       description: `A marvelous monument of heritage. Ideal for family explorers and photography tours.`,
@@ -96,6 +119,7 @@ export default function App() {
     };
 
     const matchedDetails = attractionDetailsInfo[searchKey] || defaultDetails;
+    const targetCity = city || (matchedDetails as any).city || detectCityFromAttraction(name);
 
     setModalData({
       name,
@@ -104,7 +128,8 @@ export default function App() {
       timings: matchedDetails.timings,
       fee: matchedDetails.fee,
       tip: matchedDetails.tip,
-      image: matchedDetails.image
+      image: matchedDetails.image,
+      city: targetCity
     });
 
     setShowModal(true);
@@ -130,6 +155,8 @@ export default function App() {
         currentLang={currentLang} 
         setCurrentLang={handleLanguageChange} 
         isLoggedIn={isLoggedIn} 
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
 
       <Toast toasts={toasts} removeToast={removeToast} />

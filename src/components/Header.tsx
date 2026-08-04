@@ -7,7 +7,9 @@ import {
   Languages,
   Mail,
   MapPin,
-  Megaphone
+  Megaphone,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 import React, { useEffect, useState } from 'react';
@@ -22,9 +24,11 @@ interface HeaderProps {
   currentLang: Language;
   setCurrentLang: (lang: Language) => void;
   isLoggedIn: boolean;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 }
 
-export default function Header({ currentPage, setCurrentPage, currentLang, setCurrentLang, isLoggedIn }: HeaderProps) {
+export default function Header({ currentPage, setCurrentPage, currentLang, setCurrentLang, isLoggedIn, theme, toggleTheme }: HeaderProps) {
   const [wishlistCount, setWishlistCount] = useState(0);
 
   useEffect(() => {
@@ -39,7 +43,7 @@ export default function Header({ currentPage, setCurrentPage, currentLang, setCu
   const t = (key: string) => translations[currentLang][key] || translations['en'][key];
 
   return (
-    <header className="flex flex-col w-full bg-white border-b border-slate-200 sticky top-0 z-50">
+    <header className="flex flex-col w-full bg-white border-b border-slate-200 sticky top-0 z-50 transition-colors duration-200">
       <div className="bg-indigo-600 text-indigo-50 text-[11px] py-2 px-4 text-center font-medium flex justify-between items-center w-full">
         <span className="hidden sm:flex items-center gap-1.5"><Crown className="w-3.5 h-3.5" /> {t('welcomeBar')}</span>
         <span className="mx-auto sm:mx-0 flex items-center gap-1.5"><Megaphone className="w-3.5 h-3.5" /> Special Autumn Offer: Get Free Camel Safari vouchers on smart planner booking!</span>
@@ -49,7 +53,7 @@ export default function Header({ currentPage, setCurrentPage, currentLang, setCu
       <div className="max-w-7xl w-full mx-auto px-6 py-4 flex flex-wrap justify-between items-center gap-4">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
           <img src={logoUrl} alt="Rajasthan Royal Explorer Logo" className="w-10 h-10 rounded-lg object-cover" referrerPolicy="no-referrer" />
-          <span className="text-xl font-bold tracking-tight text-slate-800">ROYAL.IO</span>
+          <span className="text-xl font-extrabold tracking-tight text-black">ROYAL RAJASTHAN</span>
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
@@ -75,6 +79,21 @@ export default function Header({ currentPage, setCurrentPage, currentLang, setCu
         </nav>
         
         <div className="flex items-center gap-3 sm:gap-4">
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center cursor-pointer shadow-2xs"
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle theme mode"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400 fill-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700" />
+            )}
+          </button>
+
           <button 
             onClick={() => setCurrentPage('planner')} 
             className="relative p-2 rounded-xl border border-slate-200 text-slate-600 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition flex items-center justify-center cursor-pointer"
